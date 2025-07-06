@@ -347,7 +347,8 @@ class Decoder(nn.Module):
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
 
-
+pretrained_cfg = timm.models.create_model('last').default_cfg  # 新加
+pretrained_cfg['file'] = r"model_weights/last.pth"  # 新加
 class UNetFormer(nn.Module):
     def __init__(self,
                  decode_channels=64,
