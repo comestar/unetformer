@@ -347,13 +347,14 @@ class Decoder(nn.Module):
                 if m.bias is not None:
                     nn.init.constant_(m.bias, 0)
 
-pretrained_cfg = timm.models.create_model('last').default_cfg  # 新加
-pretrained_cfg['file'] = r"model_weights/last.pth"  # 新加
+pretrained_cfg = timm.models.create_model('resnet18.fb_swsl_ig1b_ft_in1k').default_cfg  # 新加
+pretrained_cfg['file'] = r"/mnt/workspace/unetformer/model_weights/semi_weakly_supervised_resnet18-118f1556.pth"  # 新加
 class UNetFormer(nn.Module):
     def __init__(self,
                  decode_channels=64,
                  dropout=0.1,
-                 backbone_name='swsl_resnet18',
+                 # backbone_name='swsl_resnet18',
+                 backbone_name='resnet18.fb_swsl_ig1b_ft_in1k',#添加
                  pretrained=True,
                  window_size=8,
                  num_classes=6
@@ -361,7 +362,8 @@ class UNetFormer(nn.Module):
         super().__init__()
 
         self.backbone = timm.create_model(backbone_name, features_only=True, output_stride=32,
-                                          out_indices=(1, 2, 3, 4), pretrained=pretrained)
+                                          out_indices=(1, 2, 3, 4), pretrained=pretrained,
+                                          pretrained_cfg = pretrained_cfg)#添加
         encoder_channels = self.backbone.feature_info.channels()
 
         self.decoder = Decoder(encoder_channels, decode_channels, dropout, window_size, num_classes)
